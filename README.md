@@ -8,3 +8,19 @@ cameras:
   - name: "Camera 2"
     url: "rtsp://admin:password@192.168.88.xx:554/live/av0"
 ```
+
+## REST API
+Get image from camera:
+```
+GET http://127.0.0.1:8080/image/0
+```
+
+Get camera count:
+```
+GET http://127.0.0.1:8080/camera-count
+```
+
+Get camera list:
+```
+GET http://127.0.0.1:8080/cameras
+```

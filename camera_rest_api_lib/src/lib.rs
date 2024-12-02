@@ -39,7 +39,7 @@ pub async fn run_server(config_path: &str) -> std::io::Result<()> {
         App::new()
             .app_data(app_state.clone())
             .route("/image/{camera_index}", web::get().to(get_image))
-            .route("/camera_count", web::get().to(get_cameras_count))
+            .route("/camera-count", web::get().to(get_cameras_count))
             .route("/cameras", web::get().to(get_cameras))
     })
         .bind("127.0.0.1:8080")?
