@@ -3,11 +3,12 @@ extern crate serde;
 extern crate serde_yaml;
 
 use opencv::prelude::*;
-use opencv::videoio::{self, VideoCapture, CAP_ANY, CAP_FFMPEG};
+use opencv::videoio::{VideoCapture, CAP_ANY, CAP_FFMPEG};
 use opencv::imgcodecs;
 use opencv::core;
 use serde::Deserialize;
 use std::fs;
+use opencv::core::Vector;
 
 #[derive(Debug, Deserialize)]
 pub struct CameraConfig {
@@ -56,9 +57,11 @@ impl Camera {
             ));
         }
 
-        imgcodecs::imwrite(output_path, &frame, &opencv::types::VectorOfi32::new())?;
+        // Сохранение изображения
+        imgcodecs::imwrite(output_path, &frame, &Vector::<i32>::new())?;
         Ok(())
     }
+
 
     /// Завершение работы с камерой
     pub fn release(&mut self) {
