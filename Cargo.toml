@@ -8,3 +8,6 @@ opencv = "0.93.5"
 camera_lib = { path = "./camera_lib" }
 actix-web = "4.9.0"
 camera_rest_api_lib = {path = "./camera_rest_api_lib"}
+log = "0.4.22"
+tokio = "1.41.1"
+env_logger = "0.11.5"

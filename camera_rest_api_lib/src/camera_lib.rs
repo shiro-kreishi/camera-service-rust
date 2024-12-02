@@ -4,10 +4,10 @@ use opencv::core::Vector;
 use serde::{Serialize, Deserialize};
 use std::fs;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct CameraDetails {
     pub name: String,
-    pub url: String,  // URL для RTSP или индекс для встроенной камеры
+    pub url: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -39,14 +39,13 @@ pub fn get_camera_image(camera_index: usize, cameras: &Vec<CameraDetails>) -> Op
     }
 
     capture.read(&mut frame).unwrap();
-
     if frame.empty() {
         return None;
     }
 
-    let mut buffer = Vector::<u8>::new(); // Используем Vector<u8>, а не Vec<u8>
+    let mut buffer = Vector::<u8>::new();
     imgcodecs::imencode(".jpg", &frame, &mut buffer, &Vector::<i32>::new()).unwrap();
-    Some(buffer.to_vec()) // Преобразуем обратно в Vec<u8>, чтобы вернуть тип Option<Vec<u8>>
+    Some(buffer.to_vec())
 }
 
 pub fn get_camera_count(cameras: &Vec<CameraDetails>) -> usize {
