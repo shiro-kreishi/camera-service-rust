@@ -1,11 +1,13 @@
 mod camera;
 mod config;
+mod server_config;
 
 use actix_web::{web, App, HttpServer, Responder, HttpResponse};
 use std::sync::{Arc, Mutex};
 use log::{debug, info, error};
 use crate::camera::{Camera, get_camera_image};
 use crate::config::{CameraDetails, load_config};
+use crate::server_config::load_server_config;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -84,39 +86,36 @@ async fn main() -> std::io::Result<()> {
     }
     env_logger::init();
 
-    // Путь до конфигурации, можно указать через переменные окружения или зафиксировать
-    let config_path = "config.yml".to_string();
+    // Загружаем конфигурацию сервера
+    let server_config = load_server_config("config.yml");
 
-    // Загружаем конфигурацию из пути, указанного в AppState
-    let config = load_config(&config_path);
+    // Загружаем конфигурацию для камер
+    let config = load_config(&server_config.camera_config.config_file);
 
-    // Создаем список камер с кадрами
     let cameras: Vec<Camera> = config.cameras.iter()
         .map(|details| Camera::new(&details.url))
         .collect();
 
-    // Создаем список подробной информации о камерах
     let cameras_detailed: Vec<CameraDetails> = config.cameras.clone();
 
     // Состояние приложения
     let state = web::Data::new(AppState {
         cameras: Arc::new(Mutex::new(cameras)),
         cameras_detailed: Arc::new(Mutex::new(cameras_detailed)),
-        config_path, // Устанавливаем путь до конфигурации
+        config_path: server_config.camera_config.config_file.clone(),
     });
 
-    debug!("Server started at http://127.0.0.1:8080");
+    debug!("Server started at http://{}:{}", server_config.server.host, server_config.server.port);
 
-    // Запуск HTTP-сервера
     HttpServer::new(move || {
         App::new()
             .app_data(state.clone())
             .route("/image/{index}", web::get().to(get_image))
             .route("/camera_count", web::get().to(get_cameras_count))
-            .route("/cameras", web::get().to(get_cameras))  // Новый маршрут для списка камер
+            .route("/cameras", web::get().to(get_cameras))
             .route("/refresh", web::get().to(refresh_cameras))  // Новый маршрут для обновления списка камер
     })
-        .bind("127.0.0.1:8080")?
+        .bind(format!("{}:{}", server_config.server.host, server_config.server.port))?
         .run()
         .await
 }

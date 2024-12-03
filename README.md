@@ -1,7 +1,21 @@
 # Rust OpenCV
 
-## config.yml
+## main server config
+config.yml
 ```yaml
+server:
+  host: "127.0.0.1"
+  port: 8002
+  log_level: "debug"
+
+camera_config:
+  config_file: "camera_config.yml"
+```
+
+## camera config
+camera_config.yml
+```yaml
+# config.yml
 cameras:
   - name: "Camera 1"
     url: "rtsp://admin:password@192.168.88.xx:554/live/av0"
