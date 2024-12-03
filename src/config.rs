@@ -1,7 +1,7 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fs;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct CameraDetails {
     pub name: String,
     pub url: String,  // URL для RTSP или индекс для встроенной камеры
