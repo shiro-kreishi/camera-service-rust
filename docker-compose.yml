@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    container_name: rust_app
+    ports:
+      - "8002:8002"
+    volumes:
+      - .:/usr/src/app  # Для удобства разработки: синхронизация исходников
+    environment:
+      - RUST_LOG=debug  # Уровень логирования
+    restart: unless-stopped
